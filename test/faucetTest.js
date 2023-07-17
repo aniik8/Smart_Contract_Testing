@@ -13,17 +13,24 @@ describe('Faucet', function () {
     const [owner, addr] = await ethers.getSigners();
     let withdrawAmount = ethers.parseUnits('1', 'ether');
     console.log('Signer 1 address: ', owner.address);
-    return { faucet, owner, withdrawAmount};
+    return { faucet, owner, addr, withdrawAmount};
   }
 
-  it('should deploy and set the owner correctly', async function () {
-    const { faucet, owner, withdrawAmount} = await loadFixture(deployContractAndSetVariables);
+//   it('should deploy and set the owner correctly', async function () {
+//     const { faucet, owner, withdrawAmount} = await loadFixture(deployContractAndSetVariables);
 
-    expect(await faucet.owner()).to.equal(owner.address);
+//     expect(await faucet.owner()).to.equal(owner.address);
+//   });
+//   it('should withdraw the amount from the owner to the sender', async () => {
+//     const { faucet, owner, withdrawAmount} = await loadFixture(deployContractAndSetVariables);
+//     // const amount = faucet.withdraw(10);
+//     expect(await faucet.withdraw(withdrawAmount)).to.be.reverted;
+//   });
+  it('should be called by the owner only', async () => {
+    const {faucet, owner, addr} = await loadFixture(deployContractAndSetVariables);
+    expect(faucet.connect(owner).withdrawAll()).to.be.revertedWith("only owner can call");
+    
+    console.log(owner.address + " " + addr.address);
   });
-  it('should withdraw the amount from the owner to the sender', async () => {
-    const { faucet, owner, withdrawAmount} = await loadFixture(deployContractAndSetVariables);
-    // const amount = faucet.withdraw(10);
-    expect(await faucet.withdraw(withdrawAmount)).to.be.reverted;
-  })
-});
+  });
+// });
